@@ -1,0 +1,205 @@
+[
+  {
+    "code": "F5",
+    "label": "F5",
+    "slot": 35,
+    "actionHex": "30 94 01",
+    "index": 0
+  },
+  {
+    "code": "F6",
+    "label": "F6",
+    "slot": 42,
+    "actionHex": "30 23 02",
+    "index": 1
+  },
+  {
+    "code": "F7",
+    "label": "F7",
+    "slot": 49,
+    "actionHex": "A0 AC 00",
+    "index": 2
+  },
+  {
+    "code": "F8",
+    "label": "F8",
+    "slot": 56,
+    "actionHex": "30 92 01",
+    "index": 3
+  },
+  {
+    "code": "F10",
+    "label": "F10",
+    "slot": 70,
+    "actionHex": "30 E2 00",
+    "index": 4
+  },
+  {
+    "code": "F11",
+    "label": "F11",
+    "slot": 77,
+    "actionHex": "30 EA 00",
+    "index": 5
+  },
+  {
+    "code": "F12",
+    "label": "F12",
+    "slot": 84,
+    "actionHex": "30 E9 00",
+    "index": 6
+  },
+  {
+    "code": "PrintScreen",
+    "label": "PrtSc",
+    "slot": 76,
+    "actionHex": "20 00 49",
+    "index": 7
+  },
+  {
+    "code": "Delete",
+    "label": "Del",
+    "slot": 55,
+    "actionHex": "A0 AD 00",
+    "index": 8
+  },
+  {
+    "code": "PageUp",
+    "label": "PgUp",
+    "slot": 48,
+    "actionHex": "A0 12 00",
+    "index": 9
+  },
+  {
+    "code": "PageDown",
+    "label": "PgDn",
+    "slot": 41,
+    "actionHex": "A0 13 00",
+    "index": 10
+  },
+  {
+    "code": "Home",
+    "label": "Home",
+    "slot": 62,
+    "actionHex": "A0 10 00",
+    "index": 11
+  },
+  {
+    "code": "End",
+    "label": "End",
+    "slot": 13,
+    "actionHex": "A0 16 00",
+    "index": 12
+  },
+  {
+    "code": "ArrowUp",
+    "label": "↑",
+    "slot": 27,
+    "actionHex": "A0 14 00",
+    "index": 13
+  },
+  {
+    "code": "ArrowDown",
+    "label": "↓",
+    "slot": 89,
+    "actionHex": "A0 15 00",
+    "index": 14
+  },
+  {
+    "code": "ArrowLeft",
+    "label": "←",
+    "slot": 82,
+    "actionHex": "30 B6 00",
+    "index": 15
+  },
+  {
+    "code": "ArrowRight",
+    "label": "→",
+    "slot": 69,
+    "actionHex": "30 B5 00",
+    "index": 16
+  },
+  {
+    "code": "Enter",
+    "label": "Enter",
+    "slot": 40,
+    "actionHex": "30 CD 00",
+    "index": 17
+  },
+  {
+    "code": "MetaLeft",
+    "label": "Win",
+    "slot": 12,
+    "actionHex": "A0 03 00",
+    "index": 18
+  },
+  {
+    "code": "Tab",
+    "label": "Tab",
+    "slot": 2,
+    "actionHex": "A0 A9 00",
+    "index": 19
+  },
+  {
+    "code": "CapsLock",
+    "label": "Caps",
+    "slot": 3,
+    "actionHex": "A0 AA 00",
+    "index": 20
+  },
+  {
+    "code": "Space",
+    "label": "Space",
+    "slot": 47,
+    "actionHex": "A0 0C 00",
+    "index": 21
+  },
+  {
+    "code": "Digit1",
+    "label": "1",
+    "slot": 8,
+    "actionHex": "A0 A8 00",
+    "index": 22
+  },
+  {
+    "code": "Digit2",
+    "label": "2",
+    "slot": 15,
+    "actionHex": "A0 A8 01",
+    "index": 23
+  },
+  {
+    "code": "Digit3",
+    "label": "3",
+    "slot": 22,
+    "actionHex": "A0 A8 02",
+    "index": 24
+  },
+  {
+    "code": "Digit4",
+    "label": "4",
+    "slot": 29,
+    "actionHex": "A0 A7 00",
+    "index": 25
+  },
+  {
+    "code": "KeyB",
+    "label": "B",
+    "slot": 46,
+    "actionHex": "A0 AB 00",
+    "index": 26
+  },
+  {
+    "code": "KeyS",
+    "label": "S",
+    "slot": 17,
+    "actionHex": "A0 AE 00",
+    "index": 27
+  },
+  {
+    "code": "ControlLeft",
+    "label": "Ctrl",
+    "slot": 5,
+    "actionHex": "A0 AF 00",
+    "index": 28
+  }
+]

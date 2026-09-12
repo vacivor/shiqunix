@@ -1,0 +1,366 @@
+[
+  {
+    "slot": 0,
+    "assignmentHex": "200029"
+  },
+  {
+    "slot": 1,
+    "assignmentHex": "200035"
+  },
+  {
+    "slot": 2,
+    "assignmentHex": "20002B"
+  },
+  {
+    "slot": 3,
+    "assignmentHex": "200039"
+  },
+  {
+    "slot": 4,
+    "assignmentHex": "200200"
+  },
+  {
+    "slot": 5,
+    "assignmentHex": "200100"
+  },
+  {
+    "slot": 6,
+    "assignmentHex": "200000"
+  },
+  {
+    "slot": 7,
+    "assignmentHex": "20003A"
+  },
+  {
+    "slot": 8,
+    "assignmentHex": "20001E"
+  },
+  {
+    "slot": 9,
+    "assignmentHex": "200014"
+  },
+  {
+    "slot": 10,
+    "assignmentHex": "200004"
+  },
+  {
+    "slot": 11,
+    "assignmentHex": "200064"
+  },
+  {
+    "slot": 12,
+    "assignmentHex": "200800"
+  },
+  {
+    "slot": 13,
+    "assignmentHex": "20004D"
+  },
+  {
+    "slot": 14,
+    "assignmentHex": "20003B"
+  },
+  {
+    "slot": 15,
+    "assignmentHex": "20001F"
+  },
+  {
+    "slot": 16,
+    "assignmentHex": "20001A"
+  },
+  {
+    "slot": 17,
+    "assignmentHex": "200016"
+  },
+  {
+    "slot": 18,
+    "assignmentHex": "20001D"
+  },
+  {
+    "slot": 19,
+    "assignmentHex": "200400"
+  },
+  {
+    "slot": 20,
+    "assignmentHex": "200000"
+  },
+  {
+    "slot": 21,
+    "assignmentHex": "20003C"
+  },
+  {
+    "slot": 22,
+    "assignmentHex": "200020"
+  },
+  {
+    "slot": 23,
+    "assignmentHex": "200008"
+  },
+  {
+    "slot": 24,
+    "assignmentHex": "200007"
+  },
+  {
+    "slot": 25,
+    "assignmentHex": "20001B"
+  },
+  {
+    "slot": 26,
+    "assignmentHex": "202000"
+  },
+  {
+    "slot": 27,
+    "assignmentHex": "200052"
+  },
+  {
+    "slot": 28,
+    "assignmentHex": "20003D"
+  },
+  {
+    "slot": 29,
+    "assignmentHex": "200021"
+  },
+  {
+    "slot": 30,
+    "assignmentHex": "200015"
+  },
+  {
+    "slot": 31,
+    "assignmentHex": "200009"
+  },
+  {
+    "slot": 32,
+    "assignmentHex": "200006"
+  },
+  {
+    "slot": 33,
+    "assignmentHex": "200031"
+  },
+  {
+    "slot": 34,
+    "assignmentHex": "200048"
+  },
+  {
+    "slot": 35,
+    "assignmentHex": "20003E"
+  },
+  {
+    "slot": 36,
+    "assignmentHex": "200022"
+  },
+  {
+    "slot": 37,
+    "assignmentHex": "200017"
+  },
+  {
+    "slot": 38,
+    "assignmentHex": "20000A"
+  },
+  {
+    "slot": 39,
+    "assignmentHex": "200019"
+  },
+  {
+    "slot": 40,
+    "assignmentHex": "200028"
+  },
+  {
+    "slot": 41,
+    "assignmentHex": "20004E"
+  },
+  {
+    "slot": 42,
+    "assignmentHex": "20003F"
+  },
+  {
+    "slot": 43,
+    "assignmentHex": "200023"
+  },
+  {
+    "slot": 44,
+    "assignmentHex": "20001C"
+  },
+  {
+    "slot": 45,
+    "assignmentHex": "20000B"
+  },
+  {
+    "slot": 46,
+    "assignmentHex": "200005"
+  },
+  {
+    "slot": 47,
+    "assignmentHex": "20002C"
+  },
+  {
+    "slot": 48,
+    "assignmentHex": "20004B"
+  },
+  {
+    "slot": 49,
+    "assignmentHex": "200040"
+  },
+  {
+    "slot": 50,
+    "assignmentHex": "200024"
+  },
+  {
+    "slot": 51,
+    "assignmentHex": "200018"
+  },
+  {
+    "slot": 52,
+    "assignmentHex": "20000D"
+  },
+  {
+    "slot": 53,
+    "assignmentHex": "200011"
+  },
+  {
+    "slot": 54,
+    "assignmentHex": "20002A"
+  },
+  {
+    "slot": 55,
+    "assignmentHex": "20004C"
+  },
+  {
+    "slot": 56,
+    "assignmentHex": "200041"
+  },
+  {
+    "slot": 57,
+    "assignmentHex": "200025"
+  },
+  {
+    "slot": 58,
+    "assignmentHex": "20000C"
+  },
+  {
+    "slot": 59,
+    "assignmentHex": "20000E"
+  },
+  {
+    "slot": 60,
+    "assignmentHex": "200010"
+  },
+  {
+    "slot": 61,
+    "assignmentHex": "204000"
+  },
+  {
+    "slot": 62,
+    "assignmentHex": "20004A"
+  },
+  {
+    "slot": 63,
+    "assignmentHex": "200042"
+  },
+  {
+    "slot": 64,
+    "assignmentHex": "200026"
+  },
+  {
+    "slot": 65,
+    "assignmentHex": "200012"
+  },
+  {
+    "slot": 66,
+    "assignmentHex": "20000F"
+  },
+  {
+    "slot": 67,
+    "assignmentHex": "200036"
+  },
+  {
+    "slot": 68,
+    "assignmentHex": "200000"
+  },
+  {
+    "slot": 69,
+    "assignmentHex": "20004F"
+  },
+  {
+    "slot": 70,
+    "assignmentHex": "200043"
+  },
+  {
+    "slot": 71,
+    "assignmentHex": "200027"
+  },
+  {
+    "slot": 72,
+    "assignmentHex": "200013"
+  },
+  {
+    "slot": 73,
+    "assignmentHex": "200033"
+  },
+  {
+    "slot": 74,
+    "assignmentHex": "200037"
+  },
+  {
+    "slot": 75,
+    "assignmentHex": "201000"
+  },
+  {
+    "slot": 76,
+    "assignmentHex": "200046"
+  },
+  {
+    "slot": 77,
+    "assignmentHex": "200044"
+  },
+  {
+    "slot": 78,
+    "assignmentHex": "20002D"
+  },
+  {
+    "slot": 79,
+    "assignmentHex": "20002F"
+  },
+  {
+    "slot": 80,
+    "assignmentHex": "200034"
+  },
+  {
+    "slot": 81,
+    "assignmentHex": "200038"
+  },
+  {
+    "slot": 82,
+    "assignmentHex": "200050"
+  },
+  {
+    "slot": 83,
+    "assignmentHex": "200000"
+  },
+  {
+    "slot": 84,
+    "assignmentHex": "200045"
+  },
+  {
+    "slot": 85,
+    "assignmentHex": "20002E"
+  },
+  {
+    "slot": 86,
+    "assignmentHex": "200030"
+  },
+  {
+    "slot": 87,
+    "assignmentHex": "200032"
+  },
+  {
+    "slot": 88,
+    "assignmentHex": "200087"
+  },
+  {
+    "slot": 89,
+    "assignmentHex": "200051"
+  },
+  {
+    "slot": 90,
+    "assignmentHex": "200000"
+  }
+]

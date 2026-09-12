@@ -1,0 +1,500 @@
+[
+  {
+    "code": "Escape",
+    "label": "Esc",
+    "assignment": 2097193,
+    "slot": 0
+  },
+  {
+    "code": "F1",
+    "label": "F1",
+    "assignment": 2097210,
+    "slot": 7
+  },
+  {
+    "code": "F2",
+    "label": "F2",
+    "assignment": 2097211,
+    "slot": 14
+  },
+  {
+    "code": "F3",
+    "label": "F3",
+    "assignment": 2097212,
+    "slot": 21
+  },
+  {
+    "code": "F4",
+    "label": "F4",
+    "assignment": 2097213,
+    "slot": 28
+  },
+  {
+    "code": "F5",
+    "label": "F5",
+    "assignment": 2097214,
+    "slot": 35
+  },
+  {
+    "code": "F6",
+    "label": "F6",
+    "assignment": 2097215,
+    "slot": 42
+  },
+  {
+    "code": "F7",
+    "label": "F7",
+    "assignment": 2097216,
+    "slot": 49
+  },
+  {
+    "code": "F8",
+    "label": "F8",
+    "assignment": 2097217,
+    "slot": 56
+  },
+  {
+    "code": "F9",
+    "label": "F9",
+    "assignment": 2097218,
+    "slot": 63
+  },
+  {
+    "code": "F10",
+    "label": "F10",
+    "assignment": 2097219,
+    "slot": 70
+  },
+  {
+    "code": "F11",
+    "label": "F11",
+    "assignment": 2097220,
+    "slot": 77
+  },
+  {
+    "code": "F12",
+    "label": "F12",
+    "assignment": 2097221,
+    "slot": 84
+  },
+  {
+    "code": "PrintScreen",
+    "label": "PrtSc",
+    "assignment": 2097222,
+    "slot": 76
+  },
+  {
+    "code": "Delete",
+    "label": "Del",
+    "assignment": 2097228,
+    "slot": 55
+  },
+  {
+    "code": "Backquote",
+    "label": "~",
+    "assignment": 2097205,
+    "slot": 1
+  },
+  {
+    "code": "Digit1",
+    "label": "1",
+    "assignment": 2097182,
+    "slot": 8
+  },
+  {
+    "code": "Digit2",
+    "label": "2",
+    "assignment": 2097183,
+    "slot": 15
+  },
+  {
+    "code": "Digit3",
+    "label": "3",
+    "assignment": 2097184,
+    "slot": 22
+  },
+  {
+    "code": "Digit4",
+    "label": "4",
+    "assignment": 2097185,
+    "slot": 29
+  },
+  {
+    "code": "Digit5",
+    "label": "5",
+    "assignment": 2097186,
+    "slot": 36
+  },
+  {
+    "code": "Digit6",
+    "label": "6",
+    "assignment": 2097187,
+    "slot": 43
+  },
+  {
+    "code": "Digit7",
+    "label": "7",
+    "assignment": 2097188,
+    "slot": 50
+  },
+  {
+    "code": "Digit8",
+    "label": "8",
+    "assignment": 2097189,
+    "slot": 57
+  },
+  {
+    "code": "Digit9",
+    "label": "9",
+    "assignment": 2097190,
+    "slot": 64
+  },
+  {
+    "code": "Digit0",
+    "label": "0",
+    "assignment": 2097191,
+    "slot": 71
+  },
+  {
+    "code": "Minus",
+    "label": "−",
+    "assignment": 2097197,
+    "slot": 78
+  },
+  {
+    "code": "Equal",
+    "label": "=",
+    "assignment": 2097198,
+    "slot": 85
+  },
+  {
+    "code": "Backspace",
+    "label": "Backspace",
+    "assignment": 2097194,
+    "slot": 54
+  },
+  {
+    "code": "PageUp",
+    "label": "PgUp",
+    "assignment": 2097227,
+    "slot": 48
+  },
+  {
+    "code": "Tab",
+    "label": "Tab",
+    "assignment": 2097195,
+    "slot": 2
+  },
+  {
+    "code": "KeyQ",
+    "label": "Q",
+    "assignment": 2097172,
+    "slot": 9
+  },
+  {
+    "code": "KeyW",
+    "label": "W",
+    "assignment": 2097178,
+    "slot": 16
+  },
+  {
+    "code": "KeyE",
+    "label": "E",
+    "assignment": 2097160,
+    "slot": 23
+  },
+  {
+    "code": "KeyR",
+    "label": "R",
+    "assignment": 2097173,
+    "slot": 30
+  },
+  {
+    "code": "KeyT",
+    "label": "T",
+    "assignment": 2097175,
+    "slot": 37
+  },
+  {
+    "code": "KeyY",
+    "label": "Y",
+    "assignment": 2097180,
+    "slot": 44
+  },
+  {
+    "code": "KeyU",
+    "label": "U",
+    "assignment": 2097176,
+    "slot": 51
+  },
+  {
+    "code": "KeyI",
+    "label": "I",
+    "assignment": 2097164,
+    "slot": 58
+  },
+  {
+    "code": "KeyO",
+    "label": "O",
+    "assignment": 2097170,
+    "slot": 65
+  },
+  {
+    "code": "KeyP",
+    "label": "P",
+    "assignment": 2097171,
+    "slot": 72
+  },
+  {
+    "code": "BracketLeft",
+    "label": "[",
+    "assignment": 2097199,
+    "slot": 79
+  },
+  {
+    "code": "BracketRight",
+    "label": "]",
+    "assignment": 2097200,
+    "slot": 86
+  },
+  {
+    "code": "Backslash",
+    "label": "\\",
+    "assignment": 2097201,
+    "slot": 33
+  },
+  {
+    "code": "PageDown",
+    "label": "PgDn",
+    "assignment": 2097230,
+    "slot": 41
+  },
+  {
+    "code": "CapsLock",
+    "label": "Caps",
+    "assignment": 2097209,
+    "slot": 3
+  },
+  {
+    "code": "KeyA",
+    "label": "A",
+    "assignment": 2097156,
+    "slot": 10
+  },
+  {
+    "code": "KeyS",
+    "label": "S",
+    "assignment": 2097174,
+    "slot": 17
+  },
+  {
+    "code": "KeyD",
+    "label": "D",
+    "assignment": 2097159,
+    "slot": 24
+  },
+  {
+    "code": "KeyF",
+    "label": "F",
+    "assignment": 2097161,
+    "slot": 31
+  },
+  {
+    "code": "KeyG",
+    "label": "G",
+    "assignment": 2097162,
+    "slot": 38
+  },
+  {
+    "code": "KeyH",
+    "label": "H",
+    "assignment": 2097163,
+    "slot": 45
+  },
+  {
+    "code": "KeyJ",
+    "label": "J",
+    "assignment": 2097165,
+    "slot": 52
+  },
+  {
+    "code": "KeyK",
+    "label": "K",
+    "assignment": 2097166,
+    "slot": 59
+  },
+  {
+    "code": "KeyL",
+    "label": "L",
+    "assignment": 2097167,
+    "slot": 66
+  },
+  {
+    "code": "Semicolon",
+    "label": ";",
+    "assignment": 2097203,
+    "slot": 73
+  },
+  {
+    "code": "Quote",
+    "label": "'",
+    "assignment": 2097204,
+    "slot": 80
+  },
+  {
+    "code": "Enter",
+    "label": "Enter",
+    "assignment": 2097192,
+    "slot": 40
+  },
+  {
+    "code": "Home",
+    "label": "Home",
+    "assignment": 2097226,
+    "slot": 62
+  },
+  {
+    "code": "ShiftLeft",
+    "label": "Shift",
+    "assignment": 2097664,
+    "slot": 4
+  },
+  {
+    "code": "KeyZ",
+    "label": "Z",
+    "assignment": 2097181,
+    "slot": 18
+  },
+  {
+    "code": "KeyX",
+    "label": "X",
+    "assignment": 2097179,
+    "slot": 25
+  },
+  {
+    "code": "KeyC",
+    "label": "C",
+    "assignment": 2097158,
+    "slot": 32
+  },
+  {
+    "code": "KeyV",
+    "label": "V",
+    "assignment": 2097177,
+    "slot": 39
+  },
+  {
+    "code": "KeyB",
+    "label": "B",
+    "assignment": 2097157,
+    "slot": 46
+  },
+  {
+    "code": "KeyN",
+    "label": "N",
+    "assignment": 2097169,
+    "slot": 53
+  },
+  {
+    "code": "KeyM",
+    "label": "M",
+    "assignment": 2097168,
+    "slot": 60
+  },
+  {
+    "code": "Comma",
+    "label": ",",
+    "assignment": 2097206,
+    "slot": 67
+  },
+  {
+    "code": "Period",
+    "label": ".",
+    "assignment": 2097207,
+    "slot": 74
+  },
+  {
+    "code": "Slash",
+    "label": "/",
+    "assignment": 2097208,
+    "slot": 81
+  },
+  {
+    "code": "ShiftRight",
+    "label": "Shift",
+    "assignment": 2105344,
+    "slot": 26
+  },
+  {
+    "code": "ArrowUp",
+    "label": "↑",
+    "assignment": 2097234,
+    "slot": 27
+  },
+  {
+    "code": "End",
+    "label": "End",
+    "assignment": 2097229,
+    "slot": 13
+  },
+  {
+    "code": "ControlLeft",
+    "label": "Ctrl",
+    "assignment": 2097408,
+    "slot": 5
+  },
+  {
+    "code": "MetaLeft",
+    "label": "Win",
+    "assignment": 2099200,
+    "slot": 12
+  },
+  {
+    "code": "AltLeft",
+    "label": "Alt",
+    "assignment": 2098176,
+    "slot": 19
+  },
+  {
+    "code": "Space",
+    "label": "Space",
+    "assignment": 2097196,
+    "slot": 47
+  },
+  {
+    "code": "AltRight",
+    "label": "Alt",
+    "assignment": 2113536,
+    "slot": 61
+  },
+  {
+    "code": "Fn",
+    "label": "Fn",
+    "assignment": null,
+    "slot": null
+  },
+  {
+    "code": "ControlRight",
+    "label": "Ctrl",
+    "assignment": 2101248,
+    "slot": 75
+  },
+  {
+    "code": "ArrowLeft",
+    "label": "←",
+    "assignment": 2097232,
+    "slot": 82
+  },
+  {
+    "code": "ArrowDown",
+    "label": "↓",
+    "assignment": 2097233,
+    "slot": 89
+  },
+  {
+    "code": "ArrowRight",
+    "label": "→",
+    "assignment": 2097231,
+    "slot": 69
+  }
+]

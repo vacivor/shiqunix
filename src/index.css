@@ -1,0 +1,21 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@theme inline {
+ --color-background: #111111; --color-foreground: #eeeeee;
+ --color-primary: #aa8bd5; --color-primary-foreground: #16111e;
+ --color-secondary: #303030; --color-secondary-foreground: #e6e6e6;
+ --color-accent: #414141; --color-accent-foreground: #ffffff;
+ --color-ring: #af91d6; --color-border: #414141; --color-input: #414141;
+ --color-destructive: #d76767;
+}
+:root { font-family: Inter, 'Segoe UI', 'Microsoft YaHei', sans-serif; color: #ededed; background: #111; font-synthesis: none; text-rendering: optimizeLegibility; -webkit-font-smoothing: antialiased; color-scheme: dark; }
+* { box-sizing: border-box; }
+body { margin: 0; min-width: 820px; }
+button,input { font: inherit; }
+button { cursor: pointer; }
+button:disabled { cursor: not-allowed; }
+button:focus-visible,a:focus-visible { outline: 2px solid #b39adb; outline-offset: 3px; }
+h1,h2,h3,p { margin: 0; }
+button { transition: background .15s, border-color .15s, color .15s; }
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-thumb { background: #444; border-radius: 9px; }
