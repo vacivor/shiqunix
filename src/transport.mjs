@@ -2,6 +2,7 @@ import {applyLightingSettings,customLightingBlock} from './lighting-settings.mjs
 import {lightingModes,isWritableMode} from './lighting.mjs'
 import {KEYMAP_FRAGMENTS,patchAKey,encodeKeymapWrite} from './keymap.mjs'
 import {validateProfile,referenceBytes} from './profiles.mjs'
+import {assertUniqueMacMappings} from './mac-mapping.mjs'
 import {buildRequest,inspectResponse,assembleFragments,REPORT_ID} from './protocol.mjs'
 const pause=ms=>new Promise(resolve=>setTimeout(resolve,ms))
 const READ_COMMANDS=new Set([3,5,7,8,0x1b])
@@ -101,11 +102,15 @@ export class A80Client {
   if(![4,5].includes(usage))throw new Error('当前实验仅支持实体 A 键映射为 A 或 B。')
   return this.writeKeymap(before=>patchAKey(before,usage),onBackup)
  }
- async setProfile(profile,onBackup=(_data)=>{}){
+ async setProfile(profile,onBackup=(_data)=>{},options={}){
   const desired=Uint8Array.from(validateProfile(profile).keymap)
+  assertUniqueMacMappings(desired)
+  const checkMode=Object.hasOwn(options,'expectedOsMode')
+  if(checkMode&&![0,1].includes(options.expectedOsMode))throw new Error('键盘模式未识别，请重新读取后再应用。')
   const reference=referenceBytes()
-  return this.writeKeymap((_before,deviceReference)=>{
+  return this.writeKeymap(async(_before,deviceReference)=>{
    if(!deviceReference.every((b,i)=>b===reference[i]))throw new Error('设备参考表与已校准布局不一致，暂不应用。')
+   if(checkMode&&(await this.readOsModeBlock())!==options.expectedOsMode)throw new Error('键盘模式已变化，请重新读取后再编辑；尚未写入。')
    return desired
   },onBackup)
  }
@@ -114,7 +119,7 @@ export class A80Client {
   const reference=await this.readKeymap()
   await this.request({command:2})
   const before=await this.readCurrentKeymapBlock()
-  const desired=selectDesired(before,reference)
+  const desired=await selectDesired(before,reference)
   const wire=encodeKeymapWrite(desired)
   onBackup(before.slice())
   // Preserve the captured write sequence; verify separately with 08, never 07.

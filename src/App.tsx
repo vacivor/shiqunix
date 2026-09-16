@@ -10,7 +10,10 @@ import { KeyLegend } from './components/KeyLegend'
 import { LightingControls } from './components/LightingControls'
 import { defaultPreviewSettings, type LightingPreviewSettings } from './lighting-preview'
 import { actionTargetInfo } from './action-targets.mjs'
-import { candidateKeys, experimentalTargets, readAssignment, assignmentLabel, unassignedTarget } from './keymap.mjs'
+import { candidateKeys, experimentalTargets, readAssignment, unassignedTarget } from './keymap.mjs'
+import { referenceBytes } from './profiles.mjs'
+import { canAssignForMode, assertUniqueMacMappings } from './mac-mapping.mjs'
+import { effectiveAssignment, keyDisplayLabel, resolveKeyPlatform } from './key-display.mjs'
 import { lightingModes, lightingName } from './lighting.mjs'
 import { systemModeName, systemModeKeyNote } from './system-mode.mjs'
 import { download, useKeyboard } from './use-keyboard'
@@ -20,10 +23,20 @@ const navigation = [{ id: 'keymap', label: '键盘键位', icon: Keyboard }, { i
 const categories = ['基本', '媒体', '系统', '灯光']
 const symbolUsages = new Set([45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56])
 const effects = [Waves, Sparkles, Wind, Zap, Circle, Sun, Flower2, Settings]
+const defaultKeymap = referenceBytes()
+const keyPlatformStorage = 'shiqunix.key-platform'
 const fnActions = [['F5','我的电脑'], ['F6','浏览器'], ['F7','Ctrl+Alt+Del'], ['F8','计算器'], ['F10','静音'], ['F11','音量 −'], ['F12','音量 +'], ['PrtSc','Insert'], ['Enter','播放 / 暂停'], ['←','上一首'], ['→','下一首'], ['Del','背光开关'], ['PgUp','亮度 +'], ['PgDn','亮度 −'], ['Home','灯效切换'], ['End','颜色切换'], ['1','蓝牙 · 需先切无线'], ['4','2.4G · 需先切无线']]
 export default function App() {
   const device = useKeyboard()
   const page = usePageRoute()
+  const [keyPlatformPreference, setKeyPlatformPreference] = useState(() => {
+    try { const saved = localStorage.getItem(keyPlatformStorage); return saved === 'windows' || saved === 'macos' ? saved : 'auto' } catch { return 'auto' }
+  })
+  const keyPlatform = resolveKeyPlatform(keyPlatformPreference, navigator)
+  function changeKeyPlatform(value: string) {
+    setKeyPlatformPreference(value)
+    try { localStorage.setItem(keyPlatformStorage, value) } catch { /* Display remains usable without storage. */ }
+  }
   const [selected, setSelected] = useState('KeyA')
   const [category, setCategory] = useState('基本')
   const [search, setSearch] = useState('')
@@ -39,6 +52,12 @@ export default function App() {
   const selectedKey = candidateKeys.find(key => key.code === selected)
   const assignment = selectedKey && device.draft ? readAssignment(device.draft.keymap, selectedKey.slot) : undefined
   const current = selectedKey && device.snapshot ? readAssignment(device.snapshot.currentKeymap, selectedKey.slot) : undefined
+  const currentOutput = selectedKey ? effectiveAssignment(current, selectedKey.slot, device.snapshot?.osMode) : undefined
+  const draftOutput = selectedKey ? effectiveAssignment(assignment, selectedKey.slot, device.snapshot?.osMode) : undefined
+  const shownKeymap = device.draft?.keymap ?? device.snapshot?.currentKeymap ?? defaultKeymap
+  let mappingError = ''
+  try { assertUniqueMacMappings(shownKeymap) } catch (error) { mappingError = (error as Error).message }
+  const targetName = (value: number) => keyDisplayLabel(value, keyPlatform)
   useEffect(() => {
     if (page !== 'tester') return
     const down = (e: KeyboardEvent) => { if ((e.target as HTMLElement).closest('input,textarea,button')) return; e.preventDefault(); setPressed(p => new Set(p).add(e.code)); setTested(p => new Set(p).add(e.code)); setLastKey(`${e.code} · ${e.key} ${e.ctrlKey ? 'Ctrl' : ''} ${e.altKey ? 'Alt' : ''} ${e.metaKey ? 'Win / Cmd' : ''}`) }
@@ -49,7 +68,7 @@ export default function App() {
   }, [page])
   function keyName(code: string, fallback: string) {
     const key = candidateKeys.find(k => k.code === code)
-    return device.draft && key ? assignmentLabel(readAssignment(device.draft.keymap, key.slot)) : fallback || 'Space'
+    return key ? targetName(effectiveAssignment(readAssignment(shownKeymap, key.slot), key.slot, device.snapshot?.osMode)) : fallback || 'Space'
   }
   const groups = ['媒体', '系统', '灯光'].includes(category) ? [{ title: category, targets: experimentalTargets.filter(t => actionTargetInfo(t.assignment)?.category === category) }] : [
     { title: '字母键', targets: experimentalTargets.filter(t => (t.assignment & 0xffff) >= 4 && (t.assignment & 0xffff) <= 29).sort((a, b) => a.assignment - b.assignment) },
@@ -68,13 +87,28 @@ export default function App() {
     <main>
       <section className="preview-area">
         <div className="board-column">
-          <KeyboardPreview systemMode={systemModeName(device.snapshot?.osMode)} page={page} effect={effect} selected={selected} tested={tested} pressed={pressed} onSelect={setSelected} keyName={keyName} previewSettings={previewSettings}/>
+          <KeyboardPreview systemMode={systemModeName(device.snapshot?.osMode)} page={page} effect={effect} selected={selected} tested={tested} pressed={pressed} onSelect={setSelected} keyName={keyName} previewSettings={previewSettings} keyPlatformPreference={keyPlatformPreference} onKeyPlatformChange={changeKeyPlatform}/>
         </div>
-        {page === 'keymap' && <aside className="inspector"><div><small>当前选择</small><h2>{allKeys.find(k => k.code === selected)?.label || 'Space'}</h2><p>{current === undefined ? '' : `设备：${assignmentLabel(current)}`}</p>{assignment !== undefined && assignment !== current && <p>草稿：{assignmentLabel(assignment)}</p>}</div><Button variant="secondary" disabled={!device.draft || device.busy} onClick={() => download('shiqunix-profile.json', device.draft)}><Download/>导出配置</Button><Button variant="secondary" disabled={device.busy} onClick={() => file.current?.click()}><Upload/>导入配置</Button><input ref={file} hidden type="file" accept=".json" onChange={e => { if (e.target.files?.[0]) void device.importFile(e.target.files[0]); e.target.value = '' }}/><Button variant="ghost" disabled={!device.connected || device.busy} onClick={device.refresh}><RotateCcw/>重新读取{device.dirty ? '并撤销草稿' : ''}</Button></aside>}
+        {page === 'keymap' && <aside className="inspector"><div><small>实体位置</small><h2>{allKeys.find(k => k.code === selected)?.label || 'Space'}</h2><p>{currentOutput === undefined ? '' : `设备输出：${targetName(currentOutput)}`}</p>{assignment !== undefined && assignment !== current && <p>草稿输出：{targetName(draftOutput)}</p>}</div><Button variant="secondary" disabled={!device.draft || device.busy} onClick={() => download('shiqunix-profile.json', device.draft)}><Download/>导出配置</Button><Button variant="secondary" disabled={device.busy} onClick={() => file.current?.click()}><Upload/>导入配置</Button><input ref={file} hidden type="file" accept=".json" onChange={e => { if (e.target.files?.[0]) void device.importFile(e.target.files[0]); e.target.value = '' }}/><Button variant="ghost" disabled={!device.connected || device.busy} onClick={device.refresh}><RotateCcw/>重新读取{device.dirty ? '并撤销草稿' : ''}</Button></aside>}
       </section>
-      {(device.error || device.connected || device.dirty) && <div className={`notice ${device.error ? 'error' : ''}`} role="status">{device.error || device.message}</div>}
+      {(device.error || mappingError || device.connected || device.dirty) && <div className={`notice ${device.error || mappingError ? 'error' : ''}`} role="status">{device.error || mappingError || device.message}</div>}
       <section className="workspace-panel">
-        {page === 'keymap' && <><div className="panel-toolbar"><div className="pill-tabs">{categories.map(c => <button key={c} className={category === c ? 'selected' : ''} onClick={() => setCategory(c)}>{c}</button>)}</div><label className="search"><Search size={16}/><input placeholder="搜索键位" value={search} onChange={e => setSearch(e.target.value)}/></label><Button variant="secondary" title="将全部键位恢复为默认映射草稿，应用后生效" disabled={!device.connected || !device.snapshot || !device.draft || device.busy} onClick={device.resetKeymap}><RotateCcw/>重置键位</Button><Button disabled={!device.connected || !device.snapshot || !device.dirty || device.busy} onClick={device.apply}><Check/>应用修改{device.dirty ? ' · 待保存' : ''}</Button></div><p className="mode-note">{systemModeKeyNote(device.snapshot?.osMode, selected, assignment) || '选择上方实体按键，再从下方指定功能。修改仅在点击应用后生效。'}</p><p className="candidate-note">{assignment !== undefined && actionTargetInfo(assignment) ? actionTargetInfo(assignment)?.note : null}</p><div className="library">{groups.map(group => <section className="key-group" key={group.title}><h3>{group.title}</h3><div className="target-grid">{group.targets.filter(t => (t.label + ' ' + (actionTargetInfo(t.assignment)?.note ?? '')).toLowerCase().includes(search.toLowerCase())).map((target, i) => <button key={`${target.assignment}-${i}`} title={actionTargetInfo(target.assignment)?.note} className={assignment === target.assignment ? 'chosen' : ''} disabled={!device.draft || !selectedKey || device.busy} onClick={() => device.assign(selected, target.assignment)}><KeyLegend label={target.label}/></button>)}</div></section>)}</div></>}
+        {page === 'keymap' && <>
+          <div className="panel-toolbar">
+            <div className="pill-tabs">{categories.map(c => <button key={c} className={category === c ? 'selected' : ''} onClick={() => setCategory(c)}>{c}</button>)}</div>
+            <label className="search"><Search size={16}/><input placeholder="搜索键位" value={search} onChange={e => setSearch(e.target.value)}/></label>
+            <Button variant="secondary" title="将全部键位恢复为默认映射草稿，应用后生效" disabled={!device.connected || !device.snapshot || !device.draft || device.busy} onClick={device.resetKeymap}><RotateCcw/>重置键位</Button>
+            <Button disabled={!device.connected || !device.snapshot || !device.dirty || device.busy || !!mappingError} onClick={device.apply}><Check/>应用修改{device.dirty ? ' · 待保存' : ''}</Button>
+          </div>
+          <p className="mode-note">{systemModeKeyNote(device.snapshot?.osMode, selected, assignment, keyPlatform) || '选择上方实体按键，再从下方指定功能。修改仅在点击应用后生效。'}</p>
+          <p className="candidate-note">{assignment !== undefined && actionTargetInfo(assignment) ? actionTargetInfo(assignment)?.note : null}</p>
+          <div className="library">{groups.map(group => <section className="key-group" key={group.title}><h3>{group.title}</h3><div className="target-grid">
+            {group.targets.filter(t => (targetName(t.assignment) + ' ' + t.label + ' ' + (actionTargetInfo(t.assignment)?.note ?? '')).toLowerCase().includes(search.toLowerCase())).map((target, i) => {
+              const available = canAssignForMode(selected, target.assignment, device.snapshot?.osMode)
+              return <button key={`${target.assignment}-${i}`} title={available ? actionTargetInfo(target.assignment)?.note : 'Not supported for this position in Mac mode'} className={draftOutput === target.assignment ? 'chosen' : ''} disabled={!device.draft || !selectedKey || device.busy || !available} onClick={() => device.assign(selected, target.assignment)}><KeyLegend label={targetName(target.assignment)}/></button>
+            })}
+          </div></section>)}</div>
+        </>}
         {page === 'lighting' && <><div className="panel-toolbar"><div className="pill-tabs"><button className="selected">灯效选择</button></div><span className="subtle">当前：{device.snapshot ? lightingName(device.snapshot.config[1]) : '未读取'}</span><Button disabled={!device.connected || !device.snapshot || device.busy} onClick={() => device.lighting(effect, previewSettings)}>应用灯效</Button></div><div className="lighting-layout"><div className="effects-panel"><h3>灯效</h3><div className="effect-grid">{lightingModes.map((mode, i) => { const Icon = effects[i]; return <button key={mode.value} className={effect === Number(mode.value) ? 'chosen' : ''} onClick={() => setEffect(Number(mode.value))}><Icon size={23}/><span>{mode.name}</span>{!mode.writable && <small>仅预览</small>}</button> })}</div></div><aside className="effect-settings"><h3>设置</h3><LightingControls effect={effect} settings={previewSettings} onChange={next => setLightingPreviews(previous => ({ source: lightingSource, values: { ...(previous.source === lightingSource ? previous.values : {}), [effect]: next } }))}/></aside></div></>}
         {page === 'fn' && <><h2>Fn 组合键</h2><p className="mode-note">以下为 Windows 模式下已确认的功能；由固件处理，暂不支持编辑。切换 Mac 模式后可能不同。</p><div className="fn-grid">{fnActions.map(([key, label]) => <div key={key}><kbd>Fn + {key}</kbd><span>{label}</span></div>)}</div></>}
         {page === 'tester' && <div className="tester" tabIndex={0}><Activity size={32}/><h2>{lastKey}</h2><p>已检测 {tested.size} 个按键。系统保留快捷键可能无法传到网页。</p><Button variant="secondary" onClick={() => { setTested(new Set()); setPressed(new Set()); setLastKey('测试记录已清空') }}>清空测试</Button></div>}

@@ -2,10 +2,12 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import {buildRequest,inspectResponse,assembleFragments} from '../src/protocol.mjs';
-const fixtures=['a80-init-01','a80-light-01','a80-effects-02','a80-keymap-01'].flatMap(dir=>JSON.parse(readFileSync(new URL(`../docs/${dir}/transactions.json`,import.meta.url))).transactions);
+const fixture=name=>JSON.parse(readFileSync(new URL(`./fixtures/${name}.json`,import.meta.url)));
+const fixtures=Object.values(fixture('captured-requests')).flat();
 const bytes=hex=>Uint8Array.from(hex.split(' ').map(x=>parseInt(x,16)));
 
 test('reproduce all 136 captured requests, including lighting and keymap writes',()=>{
+  assert.equal(fixtures.length,136);
   for(const tx of fixtures){
     const wire=bytes(tx.requestHex), data=wire.slice(1);
     assert.deepEqual(buildRequest({command:tx.command,length:tx.length,offset:tx.offset,payload:data.slice(7,7+tx.length),padding:data.slice(7+tx.length)}),data);
@@ -25,7 +27,7 @@ test('report ID, header and truncated data cannot be silently accepted',()=>{
 });
 test('reassemble real keymap and reject missing and overlapping pieces',()=>{
   const fragments=fixtures.slice(0,15).filter(t=>t.command===7).map(t=>({offset:t.offset,payload:bytes(t.response.payloadHex)}));
-  assert.deepEqual(assembleFragments(fragments,273),new Uint8Array(readFileSync(new URL('../docs/a80-init-01/command-07.bin',import.meta.url))));
+  assert.deepEqual(assembleFragments(fragments,273),Uint8Array.from(fixture('reference-keymap').bytes));
   assert.throws(()=>assembleFragments(fragments.slice(1),273));
   assert.throws(()=>assembleFragments([...fragments,fragments[0]],273));
 });

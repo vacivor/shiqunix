@@ -159,6 +159,8 @@ main { min-width: 0; }.topbar { display: flex; align-items: center; justify-cont
 .appearance-picker select:focus-visible { outline: 2px solid #bc96ed; outline-offset: 2px; }
 .appearance-picker select option { background: #292929; color: #eee; }
 .system-mode { color: #c4b5d6; font-size: 11px; }
+.app-shell .appearance-picker { flex-wrap: wrap; justify-content: flex-start; }
+.key-platform-picker { display: inline-flex; align-items: center; gap: 8px; margin-left: auto; color: #aaa; }
 
 .disconnect-device { align-self: flex-end; margin: -7px 5px 14px; padding: 3px 5px; background: transparent; border: 0; color: #aaa; font-size: 11px; }
 .disconnect-device:hover:not(:disabled) { color: #f3a3a3; }

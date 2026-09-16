@@ -2,6 +2,7 @@ import type { LightingPreviewSettings } from './lighting-preview'
 import { useEffect, useRef, useState } from 'react'
 import { A80Client, chooseDevice } from './transport.mjs'
 import { profileFromCurrent, setProfileAssignment, resetProfileAssignments, parseProfile } from './profiles.mjs'
+import { withKeymapLock } from './mac-mapping.mjs'
 type Snapshot = Awaited<ReturnType<A80Client['readSnapshot']>>
 type Profile = ReturnType<typeof profileFromCurrent>
 type Log = { time: string; direction: string; data: number[]; reportId: number }
@@ -45,17 +46,17 @@ export function useKeyboard() {
   const refresh = () => run(async () => { if (!client.current) return; accept(await client.current.readSnapshot()); setMessage('已重新读取键盘，草稿同步为设备当前配置。') })
   const assign = (code: string, value: number) => {
     if (!draft || busy) return
-    try { setDraft(setProfileAssignment(draft, code, value)); setDirty(true); setError(''); setMessage('修改已加入草稿，点击「应用修改」写入键盘。') } catch (e) { setError((e as Error).message) }
+    try { setDraft(setProfileAssignment(draft, code, value, snapshot?.osMode)); setDirty(true); setError(''); setMessage('修改已加入草稿，点击「应用修改」写入键盘。') } catch (e) { setError((e as Error).message) }
   }
-  const apply = () => run(async () => {
+  const apply = () => run(() => withKeymapLock(async () => {
     if (!client.current || !draft || !snapshot) return
     try {
       const result = await client.current.setProfile(draft, (bytes: Uint8Array) => {
         setBackup(bytes); localStorage.setItem('shiqunix.last-backup', JSON.stringify({ time: new Date().toISOString(), keymap: [...bytes] }))
-      })
-      setSnapshot({ ...snapshot, currentKeymap: result.keymap }); setDirty(false); setMessage('应用成功，当前键位表已完整读回核对。请测试实际输入。')
+      }, { expectedOsMode: snapshot.osMode })
+      setSnapshot({ ...snapshot, currentKeymap: result.keymap }); setDraft(profileFromCurrent(result.keymap)); setDirty(false); setMessage('应用成功，当前键位表已完整读回核对。请测试实际输入。')
     } catch (e) { setSnapshot(null); throw e }
-  })
+  }))
   const resetKeymap = () => {
     if (!draft || !connected || !snapshot || busy) return
     try {

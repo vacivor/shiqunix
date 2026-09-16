@@ -24,7 +24,8 @@ dist-ssr
 *.sw?
 
 # Local reverse-engineering evidence and generated files
-/docs/
+/docs/*
+!/docs/protocol/
 /evidence/
 *.pcap
 *.pcapng

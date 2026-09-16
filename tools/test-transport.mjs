@@ -9,20 +9,22 @@ import {patchAKey,encodeKeymapWrite} from '../src/keymap.mjs'
 import {makeProfile,setProfileAssignment,profileFromCurrent} from '../src/profiles.mjs'
 import {decodeLightingSettings,applyLightingSettings,customLightingBlock} from '../src/lighting-settings.mjs'
 import {buildRequest} from '../src/protocol.mjs'
+const fixture=name=>JSON.parse(readFileSync(new URL(`./fixtures/${name}.json`,import.meta.url)))
+const capturedRequests=fixture('captured-requests')
 
 test('lighting parameter writes and custom fragments reproduce the captured experiment',()=>{
- const {transactions}=JSON.parse(readFileSync(new URL('../../docs/a80-light-parameters-02/transactions.json',import.meta.url)))
- for(const tx of transactions.filter(t=>t.command===6)) {
-  const wire=Uint8Array.from(tx.requestHex.split(' ').map(v=>parseInt(v,16)))
+ const {configWrites,customWrites}=fixture('lighting-parameters')
+ for(const requestHex of configWrites) {
+  const wire=Uint8Array.from(requestHex.split(' ').map(v=>parseInt(v,16)))
   const payload=wire.slice(8,34), before=payload.slice();before[16]=2
   const encoded=applyLightingSettings(before,payload[1],decodeLightingSettings(before))
   assert.deepEqual(buildRequest({command:6,length:26,payload:encoded}),wire.slice(1))
  }
- for(const [packet,color,enabled] of [[1495,'#ff262a',true],[1515,'#ff262a',false],[1597,'#0021ff',true]]) {
+ for(const {color,enabled,transactions} of customWrites) {
   const config=applyLightingSettings(observedConfig,8,{brightness:100,speed:100,colorMode:'single',color,enabled})
   const block=customLightingBlock(config,enabled)
-  const start=transactions.findIndex(t=>t.packet===packet)
-  for(const tx of transactions.slice(start,start+5)) {
+  assert.equal(transactions.length,5)
+  for(const tx of transactions) {
    const {length,offset}=tx
    const encoded=buildRequest({command:11,length,offset,payload:block.slice(offset,offset+length),padding:length===49?block.slice(217,224):new Uint8Array()})
    assert.deepEqual(encoded,Uint8Array.from(tx.requestHex.split(' ').map(v=>parseInt(v,16))).slice(1))
@@ -85,7 +87,7 @@ test('user configuration with FF color flag and reserved 08 preserves untouched 
 
 test('read-only Fn reference matches all 29 extracted firmware entries and editable layout slots',()=>{
  const rows=JSON.parse(readFileSync(new URL('../src/data/fn-reference.json',import.meta.url)))
- const firmware=JSON.parse(readFileSync(new URL('../docs/firmware-analysis/tables.json',import.meta.url))).specialTables['0x29c58']
+ const firmware=fixture('fn-reference-extracted').rows
  const layout=JSON.parse(readFileSync(new URL('../src/data/layout-candidates.json',import.meta.url)))
  assert.equal(rows.length,29);assert.equal(new Set(rows.map(r=>r.code)).size,29)
  for(const row of rows){
@@ -113,10 +115,10 @@ test('snapshot refresh follows Windows/Mac/Windows and retains unknown mode with
 })
 
 test('Mac notes are tied to four physical modifiers and ordinary actions only',()=>{
- assert.match(systemModeKeyNote(1,'MetaLeft',0x200004),/输出左 Alt/)
- assert.match(systemModeKeyNote(1,'AltLeft',0x200004),/输出左 Win/)
- assert.match(systemModeKeyNote(1,'AltRight',0x200004),/输出右 Win/)
- assert.match(systemModeKeyNote(1,'ControlRight',0x200004),/输出右 Alt/)
+ assert.match(systemModeKeyNote(1,'MetaLeft',0x200004),/输出 L Alt/)
+ assert.match(systemModeKeyNote(1,'AltLeft',0x200004),/输出 L Win/)
+ assert.match(systemModeKeyNote(1,'AltRight',0x200004),/输出 R Win/)
+ assert.match(systemModeKeyNote(1,'ControlRight',0x200004),/输出 R Alt/)
  assert.equal(systemModeKeyNote(1,'KeyA',0x200800),'')
  assert.equal(systemModeKeyNote(0,'MetaLeft',0x200004),'')
  assert.equal(systemModeKeyNote(255,'MetaLeft',0x200004),'')
@@ -168,7 +170,7 @@ test('08 echo or incomplete response never becomes a successful current keymap',
 })
 
 class KeyDevice extends Device {
- keymap=new Uint8Array(readFileSync(new URL('../docs/a80-keymap-01/command-07.bin',import.meta.url)))
+ keymap=Uint8Array.from(fixture('reference-keymap').bytes)
  reference=this.keymap.slice()
  constructor(){super();this.keymap[266]=0}
  damage=false;dropWrite=false
@@ -198,7 +200,7 @@ test('A/B transactions match official writes; restoration is sent even when 07 a
  const restored=await client.setAKey(4)
  assert.equal(restored.verification,'readback-08')
  const writes=d.sent.filter(t=>t[2]===9)
- const official=JSON.parse(readFileSync(new URL('../docs/a80-keymap-01/transactions.json',import.meta.url))).transactions.filter(t=>t.command===9)
+ const official=capturedRequests['a80-keymap-01'].filter(t=>t.command===9)
  assert.equal(writes.length,10)
  for(let i=0;i<10;i++)assert.deepEqual(writes[i],Uint8Array.from(official[i].requestHex.split(' ').slice(1).map(b=>parseInt(b,16))))
  const unknown=before.slice();unknown[266]=1;assert.throws(()=>encodeKeymapWrite(unknown),/槽位 88/)
@@ -227,7 +229,7 @@ test('08 backup preserves existing changes; 07 stays reference; snapshot reports
 })
 
 test('four real 08 readings round-trip through profiles without changing any byte',()=>{
- const evidence=JSON.parse(readFileSync(new URL('../evidence/readback-08-verified.json',import.meta.url)))
+ const evidence=fixture('readback-08')
  assert.equal(evidence.readings.length,4)
  assert.deepEqual(evidence.readings.map(r=>r.bytes[32]),[4,5,5,4])
  for(const reading of evidence.readings){
@@ -249,12 +251,12 @@ test('keymap 08 mismatch stops writes and retains the pre-write backup',async()=
  await c.close()
 })
 test('Q/Z/right profile writes reproduce all six official changes and restorations',async()=>{
- const official=JSON.parse(readFileSync(new URL('../docs/a80-keymap-calibration-02/transactions.json',import.meta.url))).transactions.filter(t=>t.command===9)
+ const official=fixture('calibration-writes').requests
  for(const [index,slot,usage] of [[0,9,26],[1,9,20],[2,18,27],[3,18,29],[4,69,80],[5,69,79]]){
   const d=new KeyDevice(),c=clientFor(d),p=makeProfile();p.keymap[slot*3+2]=usage
   assert.equal((await c.setProfile(p)).verification,'readback-08')
   const writes=d.sent.filter(t=>t[2]===9)
-  for(let i=0;i<5;i++)assert.deepEqual(writes[i],Uint8Array.from(official[index*5+i].requestHex.split(' ').slice(1).map(b=>parseInt(b,16))))
+  for(let i=0;i<5;i++)assert.deepEqual(writes[i],Uint8Array.from(official[index*5+i].split(' ').slice(1).map(b=>parseInt(b,16))))
   await c.close()
  }
  const d=new KeyDevice(),c=clientFor(d),p=makeProfile('组合',5);p.keymap[29]=26;p.keymap[56]=27;p.keymap[209]=80
@@ -262,19 +264,19 @@ test('Q/Z/right profile writes reproduce all six official changes and restoratio
  d.reference[0]=0;await assert.rejects(c.setProfile(p),/参考表/);await c.close()
 })
 test('modifier, function, navigation and mute reproduce all nine captured writes',async()=>{
- const official=JSON.parse(readFileSync(new URL('../docs/a80-keymap-types-03/transactions.json',import.meta.url))).transactions.filter(t=>t.command===9)
+ const official=fixture('keymap-types-writes').requests
  const cases=[['ControlLeft',0x200400],['ControlLeft',0x200100],['F1',0x20003b],['F1',0x20003a],['Home',0x20004d],['Home',0x20004a],['F1',0x20003a],['F1',0x30e200],['F1',0x20003a]]
  for(let n=0;n<cases.length;n++){
   const [code,value]=cases[n],d=new KeyDevice(),c=clientFor(d),p=setProfileAssignment(makeProfile(),code,value)
   assert.equal((await c.setProfile(p)).verification,'readback-08')
   const writes=d.sent.filter(t=>t[2]===9)
-  for(let i=0;i<5;i++)assert.deepEqual(writes[i],Uint8Array.from(official[n*5+i].requestHex.split(' ').slice(1).map(b=>parseInt(b,16))))
+  for(let i=0;i<5;i++)assert.deepEqual(writes[i],Uint8Array.from(official[n*5+i].split(' ').slice(1).map(b=>parseInt(b,16))))
   await c.close()
  }
 })
 
 test('each preset reproduces its real captured write, including ripple 01; custom requires explicit settings',async()=>{
- const captured=JSON.parse(readFileSync(new URL('../docs/a80-effects-02/transactions.json',import.meta.url))).transactions
+ const captured=capturedRequests['a80-effects-02']
  assert.equal(lightingName(1),'波纹');assert.equal(lightingName(3),'呼吸')
  for(let mode=1;mode<=7;mode++){
   const d=new Device(),client=clientFor(d);d.config[1]=8

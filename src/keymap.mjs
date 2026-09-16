@@ -1,5 +1,6 @@
 import candidates from './data/layout-candidates.json' with {type:'json'}
 import {actionTargets} from './action-targets.mjs'
+import {logicalAssignment} from './mac-mapping.mjs'
 export const KEYMAP_LENGTH=273
 export const KEYMAP_FRAGMENTS=[[0,56],[56,56],[112,56],[168,56],[224,49]]
 export const VERIFIED_A_SLOT=10
@@ -15,10 +16,10 @@ export const mappedKeys=[
 ]
 export const optionAssignment=option=>option.assignment??(0x200000|option.usage)
 export const readAssignment=(bytes,slot)=>(bytes[slot*3]<<16)|(bytes[slot*3+1]<<8)|bytes[slot*3+2]
-export const experimentalTargets=candidates.filter(k=>k.assignment!==null).map(k=>({assignment:k.assignment,label:k.code.startsWith('Control')?(k.code.endsWith('Left')?'L Ctrl':'R Ctrl'):k.code.startsWith('Shift')?(k.code.endsWith('Left')?'L Shift':'R Shift'):k.code.startsWith('Alt')?(k.code.endsWith('Left')?'L Alt':'R Alt'):k.code.startsWith('Meta')?(k.code.endsWith('Left')?'L Win':'R Win'):k.label})).concat(actionTargets,unassignedTarget)
+export const experimentalTargets=candidates.filter(k=>k.assignment!==null).map(k=>({assignment:k.assignment,label:k.code.startsWith('Control')?(k.code.endsWith('Left')?'L Ctrl':'R Ctrl'):k.code.startsWith('Shift')?(k.code.endsWith('Left')?'L Shift':'R Shift'):k.code.startsWith('Alt')?(k.code.endsWith('Left')?'L Alt':'R Alt'):k.code.startsWith('Meta')?(k.code.endsWith('Left')?'L Win':'R Win'):k.label})).concat({assignment:0x208000,label:'R Win'},actionTargets,unassignedTarget)
 export const candidateKeys=candidates.filter(k=>k.slot!==null).map(k=>({code:k.code,label:k.label,slot:k.slot,physicalVerified:mappedKeys.some(v=>v.code===k.code),options:experimentalTargets}))
 export const editableKeys=experimental=>experimental?candidateKeys:mappedKeys
-export const assignmentLabel=assignment=>experimentalTargets.find(o=>o.assignment===assignment)?.label??`0x${assignment.toString(16).toUpperCase()}`
+export const assignmentLabel=assignment=>experimentalTargets.find(o=>o.assignment===logicalAssignment(assignment))?.label??`0x${assignment.toString(16).toUpperCase()}`
 export function patchAKey(before,usage){
  if(!(before instanceof Uint8Array)||before.length!==KEYMAP_LENGTH)throw new Error('键位表长度不匹配。')
  if(![4,5].includes(usage))throw new Error('当前实验仅支持实体 A 键映射为 A 或 B。')

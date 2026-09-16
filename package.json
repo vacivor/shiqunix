@@ -8,8 +8,8 @@
     "build": "tsc -b && vite build",
     "lint": "oxlint",
     "preview": "vite preview",
-    "test": "node --test tools/test-lighting-preview.mjs",
-    "test:research": "node --test tools/test-protocol.mjs tools/test-transport.mjs tools/test-profiles.mjs tools/test-lighting-preview.mjs"
+    "test": "node --test tools/test-lighting-preview.mjs tools/test-mac-mapping.mjs tools/test-key-display.mjs",
+    "test:research": "node --test tools/test-protocol.mjs tools/test-transport.mjs tools/test-profiles.mjs tools/test-lighting-preview.mjs tools/test-mac-mapping.mjs tools/test-key-display.mjs"
   },
   "dependencies": {
     "react": "^19.2.8",

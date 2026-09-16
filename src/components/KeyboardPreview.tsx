@@ -4,12 +4,15 @@ import { KeyLegend } from './KeyLegend'
 import { Select } from 'radix-ui'
 import { Check, ChevronDown } from 'lucide-react'
 import { previewLight, type LightPulse, type LightingPreviewSettings } from '../lighting-preview'
+import { detectKeyPlatform } from '../key-display.mjs'
 
 type Props = {
   systemMode: string; page: string; effect: number; selected: string; tested: Set<string>; pressed: Set<string>
   onSelect: (code: string) => void
   keyName: (code: string, fallback: string) => string
   previewSettings: LightingPreviewSettings
+  keyPlatformPreference: string
+  onKeyPlatformChange: (value: string) => void
 }
 const darkKeys = new Set(['Escape', 'Tab', 'CapsLock', 'Backspace', 'Enter', 'ShiftLeft', 'ShiftRight', 'ControlLeft', 'ControlRight', 'MetaLeft', 'AltLeft', 'AltRight', 'Fn', 'PrintScreen', 'Delete', 'F5', 'F6', 'F7', 'F8', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'PageUp', 'PageDown', 'Home', 'End'])
 const centeredKeys = new Set(['Backslash', 'PageUp', 'PageDown', 'Home', 'End', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Delete', 'PrintScreen', 'MetaLeft', 'AltLeft', 'AltRight', 'Fn', 'Escape', 'ControlRight', 'Space'])
@@ -22,7 +25,7 @@ const positions = new Map(rows.flatMap((row, y) => {
   let x = 0
   return row.map(key => { x += key.gap ?? 0; const position = { x: x + key.width / 2, y }; x += key.width; return [key.code, position] as const })
 }))
-export function KeyboardPreview({ systemMode, page, effect, selected, tested, pressed, onSelect, keyName, previewSettings }: Props) {
+export function KeyboardPreview({ systemMode, page, effect, selected, tested, pressed, onSelect, keyName, previewSettings, keyPlatformPreference, onKeyPlatformChange }: Props) {
   const [appearance, setAppearance] = useState<'a80' | 'l80'>('a80')
   const viewportRef = useRef<HTMLDivElement>(null)
   const boardRef = useRef<HTMLDivElement>(null)
@@ -83,7 +86,15 @@ export function KeyboardPreview({ systemMode, page, effect, selected, tested, pr
           </Select.Item>)}</Select.Viewport>
         </Select.Content></Select.Portal>
       </Select.Root>
-      <span className="system-mode" title="键盘当前系统模式，以设备读取结果为准">{systemMode === '未读取' ? 'Windows / Mac · 未读取' : `${systemMode} 模式`}</span>
+      <span className="system-mode" title="从设备读取；通过键盘切换后重新读取">键盘模式：{systemMode}</span>
+      <div className="key-platform-picker"><span>键名显示</span><Select.Root value={keyPlatformPreference} onValueChange={onKeyPlatformChange}>
+        <Select.Trigger className="appearance-trigger" aria-label="键名显示" title="只改变键名，不修改设备模式或保存的映射"><Select.Value/><Select.Icon><ChevronDown size={13}/></Select.Icon></Select.Trigger>
+        <Select.Portal><Select.Content className="appearance-menu" position="popper" sideOffset={5}>
+          <Select.Viewport>{[{value:'auto', label:`自动 · ${detectKeyPlatform() === 'macos' ? 'macOS' : 'Windows'}`}, {value:'windows', label:'Windows'}, {value:'macos', label:'macOS'}].map(item => <Select.Item className="appearance-option" key={item.value} value={item.value}>
+            <Select.ItemText>{item.label}</Select.ItemText><Select.ItemIndicator><Check size={14}/></Select.ItemIndicator>
+          </Select.Item>)}</Select.Viewport>
+        </Select.Content></Select.Portal>
+      </Select.Root></div>
     </div>
     <div ref={viewportRef} className="keyboard-viewport">
     {tooSmall && <div className="keyboard-unavailable" role="status">空间不足，无法展示键盘。请扩大窗口或横屏查看。</div>}
@@ -101,7 +112,7 @@ export function KeyboardPreview({ systemMode, page, effect, selected, tested, pr
             const start = column; column += key.width * 4
             const position = positions.get(key.code)!
             const light = previewLight(effect, key.code, position.x, position.y, lightFrame.time, previewSettings, lightFrame.pulses, reducedMotion)
-            const label = page === 'keymap' ? keyName(key.code, key.label) : key.label || 'Space'
+            const label = keyName(key.code, key.label)
             const alignment = centeredKeys.has(key.code) ? 'center' : rightAlignedKeys.has(key.code) ? 'right' : 'left'
             return <div className="key-position" key={key.code} style={{ gridColumn: `${start} / span ${key.width * 4}` } as CSSProperties}>
               {page === 'lighting' && <span aria-hidden="true" className="key-backlight" style={{ '--preview-light': light.color, opacity: light.opacity } as CSSProperties}/>}

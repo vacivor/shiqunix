@@ -1,5 +1,6 @@
 import reference from './data/captured-keymap.json' with {type:'json'}
 import {editableKeys,optionAssignment,readAssignment} from './keymap.mjs'
+import {assignmentForMode,isMacCompatibleAssignment,logicalAssignment} from './mac-mapping.mjs'
 export const PROFILE_STORAGE_KEY='shiqunix.profiles.v1'
 export const referenceBytes=()=>Uint8Array.from(reference.flatMap(s=>s.assignmentHex.match(/../g).map(b=>parseInt(b,16))))
 export function makeProfile(name='A80 配置',usage=4){
@@ -26,12 +27,18 @@ export function validateProfile(value){
  const baseline=referenceBytes()
  if(value.experimental!==undefined&&typeof value.experimental!=='boolean')throw new Error('实验模式标记无效。')
  const mappedKeys=editableKeys(value.experimental===true)
- if(value.keymap.some((b,i)=>!mappedKeys.some(k=>k.slot===Math.floor(i/3))&&b!==baseline[i])||mappedKeys.some(key=>!key.options.some(o=>optionAssignment(o)===readAssignment(value.keymap,key.slot))))throw new Error('配置包含尚未开放的键位或目标编码。')
+ if(value.keymap.some((b,i)=>!mappedKeys.some(k=>k.slot===Math.floor(i/3))&&b!==baseline[i])||mappedKeys.some(key=>{
+  const raw=readAssignment(value.keymap,key.slot)
+  const logical=isMacCompatibleAssignment(key.slot,raw)?logicalAssignment(raw):raw
+  return !key.options.some(o=>optionAssignment(o)===logical)
+ }))throw new Error('配置包含尚未开放的键位或目标编码。')
  return {format:'shiqunix-keymap',version:1,device:'05ac:024f',name:value.name.trim(),keymap:[...value.keymap],experimental:value.experimental===true}
 }
-export function setProfileAssignment(profile,code,assignment){
+export function setProfileAssignment(profile,code,assignment,osMode=undefined){
  const next=validateProfile(profile),key=editableKeys(next.experimental).find(k=>k.code===code)
- if(!key||!key.options.some(o=>optionAssignment(o)===assignment))throw new Error('尚未开放此按键或映射目标。')
+ const logical=key&&isMacCompatibleAssignment(key.slot,assignment)?logicalAssignment(assignment):assignment
+ if(!key||!key.options.some(o=>optionAssignment(o)===logical))throw new Error('尚未开放此按键或映射目标。')
+ assignment=assignmentForMode(code,assignment,osMode)
  next.keymap.splice(key.slot*3,3,assignment>>>16,(assignment>>>8)&255,assignment&255)
  return validateProfile(next)
 }

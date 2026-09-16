@@ -29,7 +29,7 @@
 当前适配 **IQUNIX A80**。界面中的 L80 选项仅用于切换键盘外观，尚不代表支持 L80 设备配置。
 
 - Fn 组合键由键盘固件处理，暂不支持修改。
-- Mac 模式下，部分修饰键的实际功能受固件控制，可能与保存的映射不同。
+- Mac 模式下，四个特殊修饰键位置使用兼容映射；已通过的组合和适用范围见 [Mac 模式协议](docs/protocol/mac-mode.md)。键名可独立选择 Windows 或 macOS 显示。
 - 键盘测试读取浏览器收到的输入，无法区分输入设备，也无法捕获所有系统快捷键。
 - 自定义背光在断电后是否保留，尚未确认。
 
@@ -45,11 +45,18 @@ npm run dev
 访问 <http://127.0.0.1:5174/>。
 
 ```sh
-npm run build  # 构建
-npm run lint   # 代码检查
-npm test       # 预览测试
+npm run build          # 构建
+npm run lint           # 代码检查
+npm test               # 显示与映射测试
+npm run test:research  # 包含抓包样本的完整协议回归
 ```
 
 技术栈：Vite、React、TypeScript、Tailwind CSS 和 shadcn/ui。
+
+## 协议文档
+
+[A80 协议说明](docs/protocol/README.md)整理了 HID 报文、键位读写、动作编码、灯光参数、Mac 模式和固定 Fn 功能，并区分实机确认与静态推论。回归所需的精简报文样本也已收录，测试无需连接键盘。
+
+## 发布
 
 推送到 `main` 后，通过 GitHub Actions 发布到 GitHub Pages。首次部署时，将仓库 **Settings → Pages → Source** 设置为 **GitHub Actions**。
