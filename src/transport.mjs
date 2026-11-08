@@ -22,7 +22,17 @@ export async function chooseDevice(){
  if(!devices.length)return null
  const device=devices.find(isCompatibleDevice)
  if(!device)throw new Error('所选设备的接口或报告长度与已验证的 A80 不一致。')
- if(!device.opened)await device.open()
+ if(!device.opened){
+  try{await device.open()}
+  catch(error){
+   const reason=error instanceof Error?error.message:String(error)
+   const platform=globalThis.navigator?.userAgentData?.platform??globalThis.navigator?.userAgent??''
+   const hint=/Linux/i.test(platform)
+    ?'Linux 上 /dev/hidraw* 默认仅 root 可读写，请为 05ac:024f 添加 udev 规则并重新插拔键盘（见 README）。'
+    :'请关闭官方驱动或其他占用该 HID 接口的程序。'
+   throw new Error(`无法打开设备：${reason} ${hint}详细原因可查看 chrome://device-log。`)
+  }
+ }
  return device
 }
 export class A80Client {

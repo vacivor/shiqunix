@@ -15,6 +15,26 @@
 
 修改键位前可以导出配置备份。刷新网页后需要重新连接键盘。
 
+## Linux 上的设备权限
+
+WebHID 通过 `/dev/hidraw*` 访问键盘。多数发行版把这些节点设为 `root:root 0600`，浏览器能在选择框里列出键盘，但点击连接时报 `Failed to open the device.`。为 A80（`05ac:024f`）添加一条 udev 规则即可：
+
+```sh
+sudo tee /etc/udev/rules.d/70-shiqunix-a80.rules >/dev/null <<'EOF'
+# Prefix below 73-seat-late.rules so logind applies the uaccess ACL.
+SUBSYSTEM=="hidraw", ATTRS{idVendor}=="05ac", ATTRS{idProduct}=="024f", TAG+="uaccess", MODE="0660", GROUP="plugdev"
+EOF
+sudo udevadm control --reload-rules
+```
+
+重新插拔键盘（或重启系统）后回到网页重新连接即可：udev 在下一次设备 `add` 事件时自动应用新规则，不需要手动触发。可用 `getfacl /dev/hidrawN` 确认出现 `user:<用户名>:rw-`，其中 N 为 `udevadm info --query=property --name=/dev/hidrawN` 里 `ID_MODEL_ID=024f` 的节点。
+
+**不要**在运行中的桌面会话里执行 `sudo udevadm trigger --subsystem-match=hidraw`。它会重新触发所有 hidraw 设备；实测曾导致 A80 的 USB 口断开、同一 xHCI 主机控制器停止响应（`xhci_hcd: HC died`），挂在同一控制器下的键鼠随之一起失联，只能重启恢复。
+
+`TAG+="uaccess"` 会由 logind 给当前活跃桌面会话的用户直接授权 ACL，不依赖附加组，因而对 Flatpak 版浏览器同样有效；`MODE/GROUP` 作为兜底，要求用户属于 `plugdev` 组。只想临时确认原因时，可对 A80 对应的节点执行 `sudo chmod a+rw /dev/hidrawN`（编号因机器而异，重启后失效）。
+
+若仍打不开，用 `chrome://device-log` 区分 `FILE_ERROR_ACCESS_DENIED`（权限）与 `FILE_ERROR_IN_USE`（被其他程序占用）。Flatpak 浏览器需具备设备访问权限（`flatpak override --user --device=all com.google.Chrome`），Snap 浏览器需连接 `raw-usb` 接口。
+
 ## 功能
 
 - **键位映射**：字母、数字、符号、修饰键、媒体控制、系统快捷键和灯光控制。
